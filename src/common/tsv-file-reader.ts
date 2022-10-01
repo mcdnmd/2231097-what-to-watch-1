@@ -2,7 +2,7 @@ import {FileReaderInterface} from './file-reader.interface.js';
 import {readFileSync} from 'fs';
 import {Film} from '../entities/film.js';
 import {Actor} from '../entities/actor.js';
-import chalk from "chalk";
+import chalk from 'chalk';
 
 export default class TsvFileReader implements FileReaderInterface {
   private rawData = '';
