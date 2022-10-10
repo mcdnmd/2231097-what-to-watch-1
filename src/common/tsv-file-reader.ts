@@ -1,72 +1,30 @@
 import {FileReaderInterface} from './file-reader.interface.js';
-import {readFileSync} from 'fs';
-import {Film} from '../entities/film.js';
-import {Actor} from '../entities/actor.js';
-import chalk from 'chalk';
+import {createReadStream} from 'fs';
+import EventEmitter from 'events';
 
-export default class TsvFileReader implements FileReaderInterface {
-  private rawData = '';
-  private columns: string[] = [];
+const KB64 = 2 ** 16;
 
-  constructor(public filename: string) {}
+export default class TsvFileReader extends EventEmitter implements FileReaderInterface {
 
-  public read() {
-    this.rawData = readFileSync(this.filename, 'utf-8');
-    this.findColumnsInFile();
+  constructor(public filename: string) {
+    super();
   }
 
-  private findColumnsInFile(): void {
-    const separatedData = this.rawData.split('\n');
-    const columnsString =  separatedData[0];
-    const indexEndOfColumns = columnsString.length;
-    this.columns = separatedData[0].split('\t');
-    this.rawData = this.rawData.slice(indexEndOfColumns);
-  }
+  async read() : Promise<void> {
+    const stream = createReadStream(this.filename, {highWaterMark: KB64,encoding: 'utf-8'});
+    let lineRead = '';
+    let endLinePosition = -1;
+    let importedRowCount = 0;
 
-  public toArray(): Film[] {
-    if (!this.rawData) {
-      return [];
+    for await (const chunk of stream) {
+      lineRead += chunk.toString();
+      while ((endLinePosition = lineRead.indexOf('\n')) >= 0) {
+        const completeRow = lineRead.slice(0, endLinePosition + 1);
+        lineRead = lineRead.slice(++endLinePosition);
+        importedRowCount++;
+        this.emit('line', completeRow);
+      }
     }
-    console.log(chalk.red('TSV columns'), chalk.bgBlack(this.columns));
-    return this.rawData
-      .split('\n')
-      .filter((row) => row.trim() !== '')
-      .map((line) => line.split('\t'))
-      .map(([name,
-        description,
-        pubDate,
-        genre,
-        year,
-        rating,
-        preview,
-        video,
-        actors,
-        producer,
-        duration,
-        commentNumber,
-        user,
-        poster,
-        backgroundImg,
-        backgroundColor]) => new Film(
-        name,
-        description,
-        new Date(Date.parse(pubDate)),
-        genre.split(';'),
-        Number(year),
-        Number(rating),
-        preview,
-        video,
-        actors.split(';').map((item) => {
-          const splitString = item.slice();
-          return new Actor(splitString.at(0), splitString.at(1));
-        }),
-        producer,
-        Number(duration),
-        Number(commentNumber),
-        user,
-        poster,
-        backgroundImg,
-        backgroundColor)
-      );
+    this.emit('end', importedRowCount);
   }
 }
