@@ -32,27 +32,41 @@ export default class TsvFileReader implements FileReaderInterface {
       .split('\n')
       .filter((row) => row.trim() !== '')
       .map((line) => line.split('\t'))
-      .map((params) => new Film(
-        params[0],
-        params[1],
-        new Date(Date.parse(params[2])),
-        params[3].split(';'),
-        Number(params[4]),
-        Number(params[5]),
-        params[6],
-        params[7],
-        params[8].split(';').map((item) => {
+      .map(([name,
+        description,
+        pubDate,
+        genre,
+        year,
+        rating,
+        preview,
+        video,
+        actors,
+        producer,
+        duration,
+        commentNumber,
+        user,
+        poster,
+        backgroundImg,
+        backgroundColor]) => new Film(
+        name,
+        description,
+        new Date(Date.parse(pubDate)),
+        genre.split(';'),
+        Number(year),
+        Number(rating),
+        preview,
+        video,
+        actors.split(';').map((item) => {
           const splitString = item.slice();
           return new Actor(splitString.at(0), splitString.at(1));
         }),
-        params[9],
-        Number(params[10]),
-        Number(params[11]),
-        params[12],
-        params[13],
-        params[14],
-        params[15]
-      )
+        producer,
+        Number(duration),
+        Number(commentNumber),
+        user,
+        poster,
+        backgroundImg,
+        backgroundColor)
       );
   }
 }
