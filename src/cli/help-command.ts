@@ -13,6 +13,7 @@ export default class HelpCommand implements CliCommandInterface {
         --version:                   # выводит номер версии
         --help:                      # печатает этот текст
         --import <path>:             # импортирует данные из TSV
+        --generate <n> <path> <url>    # Генерирует произвольное количество тестовых данных
     `);
   }
 }

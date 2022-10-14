@@ -1,5 +1,6 @@
 import {Length} from 'class-validator';
 import {Actor} from './actor.js';
+import {User} from './user.js';
 
 export class Film {
   @Length(2,100)
@@ -16,7 +17,7 @@ export class Film {
   public producer: string;
   public duration: number;
   public commentNumber: number;
-  public user: string;
+  public user: User;
   public poster: string;
   public backgroundImg: string;
   public backgroundColor: string;
@@ -33,7 +34,7 @@ export class Film {
     producer: string,
     duration: number,
     commentNumber: number,
-    user: string,
+    user: User,
     poster: string,
     backgroundImg: string,
     backgroundColor: string) {
