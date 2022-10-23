@@ -1,5 +1,5 @@
-import {MockedFilms} from '../types/mocked-film.type';
-import {GenreEnum} from '../types/genre.enum';
+import {MockedFilms} from '../types/mocked-film.type.js';
+import {GenreEnum} from '../types/genre.enum.js';
 import {getRandomItem, getRandomItems} from './random-items.js';
 
 export default class RandomFilmGenerator {

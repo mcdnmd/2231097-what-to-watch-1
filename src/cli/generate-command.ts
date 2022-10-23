@@ -1,8 +1,8 @@
-import axios from 'axios';
-import {MockedFilms} from '../types/mocked-film.type';
+import {MockedFilms} from '../types/mocked-film.type.js';
 import RandomFilmGenerator from '../utils/random-film-generator.js';
-import {CliCommandInterface} from './cli-command.interface';
-import FileWriter from '../common/file-writer.js';
+import {CliCommandInterface} from './cli-command.interface.js';
+import FileWriter from '../common/file-writer/file-writer.js';
+import got from 'got';
 
 
 export default class GenerateCommand implements CliCommandInterface {
@@ -15,8 +15,7 @@ export default class GenerateCommand implements CliCommandInterface {
     const url = parameters[2];
 
     try {
-      const response = await axios.get(url);
-      this.mockedFilms = response.data;
+      this.mockedFilms = await got.get(url).json();
     } catch(err) {
       throw Error(`Fetch data from ${url} is failed. Error: ${err}`);
     }

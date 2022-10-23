@@ -1,6 +1,5 @@
 import {Film} from '../entities/film.js';
 import {Actor} from '../entities/actor.js';
-import chalk from 'chalk';
 import {User} from '../entities/user.js';
 
 export const createFilm = (line: string): Film => {
@@ -31,7 +30,6 @@ export const createFilm = (line: string): Film => {
     preview,
     video,
     actors.split(';').map((item) => {
-      console.log(chalk.red(item));
       const splitString = item.split(' ');
       if (splitString.length > 1) {
         return new Actor(splitString.at(0), splitString.at(1));

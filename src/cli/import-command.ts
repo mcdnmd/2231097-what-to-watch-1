@@ -1,5 +1,5 @@
 import {CliCommandInterface} from './cli-command.interface.js';
-import TsvFileReader from '../common/tsv-file-reader.js';
+import TsvFileReader from '../common/file-reader/tsv-file-reader.js';
 import chalk from 'chalk';
 import {createFilm} from '../utils/film-constructor.js';
 
