@@ -1,10 +1,10 @@
-import typegoose, {defaultClasses, Ref} from '@typegoose/typegoose';
+import typegoose, {defaultClasses, getModelForClass, Ref} from '@typegoose/typegoose';
 import {GenreEnum} from '../../types/genre.enum.js';
 import {UserEntity} from '../user/user.entity.js';
 
 const { prop, modelOptions } = typegoose;
 
-export interface FilmEntity extends defaultClasses.Base {}
+export interface IFilmEntity extends defaultClasses.Base {}
 
 @modelOptions({
   schemaOptions: {
@@ -60,3 +60,5 @@ export class FilmEntity extends defaultClasses.TimeStamps {
   @prop({required: true})
   public backgroundColor!: string;
 }
+
+export const FilmModel =  getModelForClass(FilmEntity);
