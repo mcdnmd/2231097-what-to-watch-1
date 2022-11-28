@@ -17,8 +17,8 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
 
     this.email = data.email;
     this.avatarPath = data.avatarPath;
-    this.firstname = data.firstname;
-    this.lastname = data.lastname;
+    this.firstName = data.firstName;
+    this.lastName = data.lastName;
   }
 
   @prop({ unique: true, required: true })
@@ -28,15 +28,18 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   public avatarPath!: string;
 
   @prop({required: true, default: ''})
-  public firstname!: string;
+  public firstName!: string;
 
   @prop({required: true, default: ''})
-  public lastname!: string;
+  public lastName!: string;
 
   @prop({required: true, default: ''})
   private password!: string;
 
   public setPassword(password: string, salt: string) {
+    if (password.length < 6 || password.length > 12){
+      throw new Error('Password must be from 6 to 12 characters.');
+    }
     this.password = createSHA256(password, salt);
   }
 

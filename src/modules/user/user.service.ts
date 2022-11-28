@@ -29,7 +29,7 @@ export default class UserService implements UserServiceInterface {
 
   public async findOrCreate(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
     const existedUser = await this.findByEmail(dto.email);
-
+    this.logger.info(`existedUser: ${existedUser}`);
     if (existedUser) {
       return existedUser;
     }

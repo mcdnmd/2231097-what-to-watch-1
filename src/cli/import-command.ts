@@ -14,14 +14,15 @@ import {LoggerInterface} from '../common/logger/logger.interface.js';
 import UserService from '../modules/user/user.service.js';
 import {getURI} from '../utils/db.js';
 import {Film} from '../types/film.type';
+import {ConfigInterface} from '../common/config/config.interface.js';
+import ConfigService from '../common/config/config.service.js';
 
-const DB_PASSWORD = 'test';
-const DB_PORT = 27017;
 
 export default class ImportCommand implements CliCommandInterface {
   public readonly name = '--import';
-  private logger!: LoggerInterface;
+  private readonly logger!: LoggerInterface;
   private userService!: UserServiceInterface;
+  private config!: ConfigInterface;
   private filmService!: FilmServiceInterface;
   private databaseService!: DatabaseInterface;
   private salt!: string;
@@ -34,11 +35,17 @@ export default class ImportCommand implements CliCommandInterface {
     this.filmService = new FilmService(this.logger, FilmModel);
     this.userService = new UserService(this.logger, UserModel);
     this.databaseService = new DatabaseService(this.logger);
+    this.config = new ConfigService(this.logger);
   }
 
-  async execute(filename: string, login: string, password: string, host: string, dbname: string, salt: string): Promise<void> {
-    const uri = getURI(login, password, host, DB_PORT, dbname);
-    this.salt = salt;
+  async execute(filename: string): Promise<void> {
+    const uri = getURI(
+      this.config.get('DB_USER'),
+      this.config.get('DB_PASSWORD'),
+      this.config.get('DB_HOST'),
+      this.config.get('DB_PORT'),
+      this.config.get('DB_NAME'));
+    this.salt = this.config.get('SALT');
 
     await this.databaseService.connect(uri);
     const fileReader = new TsvFileReader(filename.trim());
@@ -48,14 +55,14 @@ export default class ImportCommand implements CliCommandInterface {
       await fileReader.read();
     } catch (err) {
       if (err instanceof Error) {
-        console.error(chalk.bgRed(chalk.black(`Catched an error: ${chalk.red(err.message)}`)));
+        this.logger.error(chalk.bgRed(chalk.black(`Catched an error: ${chalk.red(err.message)}`)));
       }
     }
-
+    return Promise.resolve();
   }
 
   private async saveFilm(film: Film) {
-    const user = await this.userService.findOrCreate({...film.user, password: DB_PASSWORD}, this.salt);
+    const user = await this.userService.findOrCreate({...film.user, password: '1234567890'}, this.salt);
     const filmEntity = {
       name: film.name,
       description: film.description,
@@ -79,13 +86,13 @@ export default class ImportCommand implements CliCommandInterface {
 
   private async onLine(line: string, resolve: () => void) {
     const movie = createFilm(line);
-    console.log(movie);
     await this.saveFilm(movie);
+    this.logger.info(`Сохранили фильм ${JSON.stringify(movie)}`);
     resolve();
   }
 
-  private onComplete(count: number) {
-    console.log(`${chalk.cyan(count)} строк было прочитано.`);
-    this.databaseService.disconnect();
+  private async onComplete(count: number) {
+    this.logger.info(`${count} строк было прочитано.`);
+    await this.databaseService.disconnect();
   }
 }

@@ -4,12 +4,14 @@ import {User} from '../types/user.type.js';
 import {GenreEnum} from '../types/genre.enum.js';
 
 function getUser(user: string): User {
-  const divided = user.split(';');
-  const email = divided.at(0) ?? '';
-  const avatarPath = divided.at(1) ?? '';
-  const firstname = divided.at(2) ?? '';
-  const lastname = divided.at(3) ?? '';
-  return {email, avatarPath, firstname, lastname};
+  const [email, avatarPath, firstName, lastName] = user.split(';');
+
+  return {
+    email: email ?? '',
+    avatarPath: avatarPath ?? '',
+    firstName: firstName ?? '',
+    lastName: lastName ?? ''
+  };
 }
 
 function getFilmPerson(filmPerson: string): FilmPerson {

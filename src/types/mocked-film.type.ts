@@ -10,6 +10,7 @@ export type MockedFilms = {
   producers: string[],
   movieDurations: number[],
   userNames: string[],
+  userLastNames: string[],
   userEmails: string[],
   avatarPaths: string[],
   posterPaths: string[],
