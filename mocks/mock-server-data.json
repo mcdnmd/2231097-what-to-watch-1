@@ -81,18 +81,32 @@
       180
     ],
     "userNames": [
-      "Артем Артемов",
-      "Михаил Михайлов",
-      "Кирилл Кириллов",
-      "Захар Захаров",
-      "Гриша Гришев"
+      "Артем",
+      "Михаил",
+      "Кирилл",
+      "Захар",
+      "Гриша"
+    ],
+    "userLastNames": [
+      "Артемов",
+      "Михайлов",
+      "Кириллов",
+      "Захаров",
+      "Гришев"
     ],
     "userEmails": [
       "snow@pisem.local",
+      "snow@pisem.l",
       "president@dka.local",
+      "president@dka.d",
       "fish@big.local",
+      "fish@big.s",
+      "fish@big.cp",
       "test@pisem.local",
-      "freedom@pisem.local"
+      "freedom@d.local",
+      "d@d.local",
+      "d@5.local",
+      "2@d.local"
     ],
     "avatarPaths": [
       "user.jpg",

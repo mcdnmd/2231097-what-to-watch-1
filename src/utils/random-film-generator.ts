@@ -18,6 +18,7 @@ export default class RandomFilmGenerator {
     const producer = getRandomItem<string>(this.mockedData.producers);
     const duration = getRandomItem(this.mockedData.movieDurations);
     const userName = getRandomItem<string>(this.mockedData.userNames);
+    const userLastName = getRandomItem<string>(this.mockedData.userLastNames);
     const userEmail = getRandomItem<string>(this.mockedData.userEmails);
     const avatarPath = getRandomItem<string>(this.mockedData.avatarPaths);
     const poster = getRandomItem<string>(this.mockedData.posterPaths);
@@ -37,7 +38,7 @@ export default class RandomFilmGenerator {
       producer,
       duration,
       0,
-      [userName, userEmail, avatarPath].join(';'),
+      [userEmail, avatarPath, userName, userLastName].join(';'),
       poster,
       backgroundImage,
       backgroundColor,

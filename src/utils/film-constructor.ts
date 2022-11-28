@@ -1,6 +1,29 @@
-import {Film} from '../entities/film.js';
-import {Actor} from '../entities/actor.js';
-import {User} from '../entities/user.js';
+import {Film} from '../types/film.type.js';
+import {FilmPerson} from '../types/filmPerson.type.js';
+import {User} from '../types/user.type.js';
+import {GenreEnum} from '../types/genre.enum.js';
+
+function getUser(user: string): User {
+  const [email, avatarPath, firstName, lastName] = user.split(';');
+
+  return {
+    email: email ?? '',
+    avatarPath: avatarPath ?? '',
+    firstName: firstName ?? '',
+    lastName: lastName ?? ''
+  };
+}
+
+function getFilmPerson(filmPerson: string): FilmPerson {
+  const divided = filmPerson.split(' ');
+  const firstname = divided.at(0) ?? '';
+  const lastname = divided.at(0);
+  return {firstname, lastname};
+}
+
+function getGenres(genre: string): GenreEnum[] {
+  return  genre.split(';').map((item): GenreEnum => item as GenreEnum);
+}
 
 export const createFilm = (line: string): Film => {
   const [name,
@@ -19,29 +42,21 @@ export const createFilm = (line: string): Film => {
     poster,
     backgroundImg,
     backgroundColor] = line.replace('\n', '').split('\t');
-  const [userName, email, avatar, password] = user.split(';');
-  return new Film(
-    name,
-    description,
-    new Date(Date.parse(pubDate)),
-    genre.split(';'),
-    Number(year),
-    Number(rating),
-    preview,
+  return {
+    name: name,
+    description: description,
+    pubDate: new Date(Date.parse(pubDate)),
+    genre: getGenres(genre),
+    year: Number(year),
+    rating: Number(rating),
+    preview: preview,
     video,
-    actors.split(';').map((item) => {
-      const splitString = item.split(' ');
-      if (splitString.length > 1) {
-        return new Actor(splitString.at(0), splitString.at(1));
-      } else {
-        return new Actor(item);
-      }
-    }),
-    producer,
-    Number(duration),
-    Number(commentNumber),
-    new User(userName, email, avatar, password),
-    poster,
-    backgroundImg,
-    backgroundColor);
+    actors: actors.split(';').map((item) : FilmPerson => getFilmPerson(item)),
+    producer: getFilmPerson(producer),
+    duration: Number(duration),
+    commentNumber: Number(commentNumber),
+    user: getUser(user),
+    poster: poster,
+    backgroundImage: backgroundImg,
+    backgroundColor: backgroundColor};
 };
