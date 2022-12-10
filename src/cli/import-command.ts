@@ -22,7 +22,7 @@ export default class ImportCommand implements CliCommandInterface {
   public readonly name = '--import';
   private readonly logger!: LoggerInterface;
   private userService!: UserServiceInterface;
-  private config!: ConfigInterface;
+  private readonly config!: ConfigInterface;
   private filmService!: FilmServiceInterface;
   private databaseService!: DatabaseInterface;
   private salt!: string;

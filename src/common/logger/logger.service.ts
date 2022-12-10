@@ -1,10 +1,11 @@
-import {LoggerInterface} from './logger.interface';
+import {LoggerInterface} from './logger.interface.js';
 import pino, {Logger} from 'pino';
 import {injectable} from 'inversify';
+import 'reflect-metadata';
 
 @injectable()
 export default class LoggerService implements LoggerInterface {
-  private logger!: Logger;
+  private readonly logger!: Logger;
 
   constructor() {
     this.logger = pino();

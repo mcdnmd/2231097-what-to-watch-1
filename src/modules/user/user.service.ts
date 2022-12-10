@@ -5,12 +5,14 @@ import CreateUserDto from './dto/create-user.dto.js';
 import {UserServiceInterface} from './user-service.interface.js';
 import {LoggerInterface} from '../../common/logger/logger.interface.js';
 import {Component} from '../../types/component.types.js';
+import {FilmEntity} from '../film/film.entity';
 
 @injectable()
 export default class UserService implements UserServiceInterface {
   constructor(
     @inject(Component.LoggerInterface) private logger: LoggerInterface,
-    @inject(Component.UserModel) private readonly userModel: types.ModelType<UserEntity>
+    @inject(Component.UserModel) private readonly userModel: types.ModelType<UserEntity>,
+    @inject(Component.FilmModel) private readonly filmModel: types.ModelType<FilmEntity>
   ) {}
 
   public async create(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
@@ -35,5 +37,22 @@ export default class UserService implements UserServiceInterface {
     }
 
     return this.create(dto, salt);
+  }
+
+  async addToWatch(filmId: string, userId: string): Promise<void | null> {
+    return this.userModel.findByIdAndUpdate(userId, {
+      $push: {filmsToWatch: filmId}
+    });
+  }
+
+  async deleteToWatch(filmId: string, userId: string): Promise<void | null> {
+    return this.userModel.findByIdAndUpdate(userId, {
+      $pull: {filmsToWatch: filmId}
+    });
+  }
+
+  async findToWatch(userId: string): Promise<DocumentType<FilmEntity>[]> {
+    const filmsToWatch = await this.userModel.findById(userId).select('filmsToWatch');
+    return this.filmModel.find({_id: {$in: filmsToWatch}});
   }
 }
