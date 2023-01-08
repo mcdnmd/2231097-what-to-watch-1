@@ -1,4 +1,4 @@
-import {Controller} from '../../common/controller/controller';
+import {Controller} from '../../common/controller/controller.js';
 import {inject} from 'inversify';
 import {Component} from '../../types/component.types';
 import {LoggerInterface} from '../../common/logger/logger.interface';
@@ -6,10 +6,10 @@ import {UserServiceInterface} from './user-service.interface';
 import {ConfigInterface} from '../../common/config/config.interface';
 import {Request, Response} from 'express';
 import CreateUserDto from './dto/create-user.dto';
-import {fillDTO} from '../../utils/common-functions';
+import {fillDTO} from '../../utils/common-functions.js';
 import UserResponse from './response/user.response';
 import {StatusCodes} from 'http-status-codes';
-import HttpError from '../../common/errors/http-error';
+import HttpError from '../../common/errors/http-error.js';
 import LoginUserDto from './dto/login-user.dto';
 import FilmResponse from '../film/response/film.response';
 import {UserRoute} from './user.models';

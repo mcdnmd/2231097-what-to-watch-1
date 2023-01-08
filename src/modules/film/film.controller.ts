@@ -1,4 +1,4 @@
-import {Controller} from '../../common/controller/controller';
+import {Controller} from '../../common/controller/controller.js';
 import {inject, injectable} from 'inversify';
 import {Component} from '../../types/component.types';
 import {LoggerInterface} from '../../common/logger/logger.interface';
@@ -11,7 +11,7 @@ import FilmResponse from './response/film.response';
 import CreateFilmDto from './dto/create-film.dto';
 import UpdateFilmDto from './dto/update-film.dto';
 import {StatusCodes} from 'http-status-codes';
-import HttpError from '../../common/errors/http-error';
+import HttpError from '../../common/errors/http-error.js';
 
 @injectable()
 export default class FilmController extends Controller {
