@@ -4,8 +4,8 @@ import {Component} from '../../types/component.types.js';
 import {LoggerInterface} from '../../common/logger/logger.interface.js';
 import {FilmServiceInterface} from './film-service.interface.js';
 import {FilmEntity} from './film.entity.js';
-import CreateFilmDto from './dto/create-film.dto';
-import UpdateFilmDto from './dto/update-film.dto';
+import CreateFilmDto from './dto/create-film.dto.js';
+import UpdateFilmDto from './dto/update-film.dto.js';
 
 @injectable()
 export default class FilmService implements FilmServiceInterface {
@@ -16,12 +16,13 @@ export default class FilmService implements FilmServiceInterface {
 
   async create(dto: CreateFilmDto): Promise<DocumentType<FilmEntity>> {
     const film = await this.filmModel.create(dto);
-    this.logger.info(`New film created: ${dto.name}`);
+    this.logger.info(`New film created: ${dto.title}`);
 
     return film;
   }
 
   async findById(filmId: string): Promise<DocumentType<FilmEntity> | null> {
+    this.logger.info(`findById film: ${filmId}`);
     return this.filmModel.findById(filmId).exec();
   }
 
@@ -73,10 +74,14 @@ export default class FilmService implements FilmServiceInterface {
   async updateFilmRating(filmId: string, newRating: number): Promise<void | null> {
     const oldValues = await this.filmModel.findById(filmId).select('rating commentNumber');
     const oldRating = oldValues?.['rating'] ?? 0;
-    const oldCommentsCount = oldValues?.['commentNumber'] ?? 0;
+    const oldCommentsCount = oldValues?.['commentsCount'] ?? 0;
     return this.filmModel.findByIdAndUpdate(filmId, {
       rating: (oldRating * oldCommentsCount + newRating) / (oldCommentsCount + 1)
     });
+  }
+
+  async exists(documentId: string): Promise<boolean> {
+    return (this.filmModel.exists({_id: documentId})) !== null;
   }
 
 }

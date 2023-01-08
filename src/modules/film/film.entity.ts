@@ -13,28 +13,28 @@ export interface IFilmEntity extends defaultClasses.Base {}
 })
 export class FilmEntity extends defaultClasses.TimeStamps {
   @prop({trim: true, required: true, minlength: 2, maxlength: 100})
-  public name!: string;
+  public title!: string;
 
   @prop({trim: true, required: true, minlength: 20, maxlength: 1024})
   public description!: string;
 
   @prop({required: true})
-  public pubDate!: Date;
+  public publicationDate!: Date;
 
   @prop({type: () => String, required: true, enum: GenreEnum})
   public genre!: GenreEnum[];
 
   @prop({required: true})
-  public year!: number;
+  public releaseYear!: number;
 
   @prop({required: true, default: 0})
   public rating!: number;
 
   @prop({required: true})
-  public preview!: string;
+  public previewPath!: string;
 
   @prop({required: true})
-  public video!: string;
+  public moviePath!: string;
 
   @prop({required: true})
   public actors!: string[];
@@ -43,19 +43,19 @@ export class FilmEntity extends defaultClasses.TimeStamps {
   public producer!: string;
 
   @prop({required: true})
-  public duration!: number;
+  public durationInMinutes!: number;
 
   @prop({default: 0})
-  public commentNumber!: number;
+  public commentsCount!: number;
 
   @prop({ref: UserEntity, required: true})
-  public user: Ref<UserEntity>;
+  public userId: Ref<UserEntity>;
 
   @prop({required: true, match: /(\S+(\.jpg)$)/})
-  public poster!: string;
+  public posterPath!: string;
 
   @prop({required: true, match: /(\S+(\.jpg)$)/})
-  public backgroundImage!: string;
+  public backgroundImagePath!: string;
 
   @prop({required: true})
   public backgroundColor!: string;

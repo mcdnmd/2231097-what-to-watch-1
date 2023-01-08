@@ -1,7 +1,7 @@
-import {ExceptionFilterInterface} from './exception-filter.interface';
+import {ExceptionFilterInterface} from './exception-filter.interface.js';
 import {inject, injectable} from 'inversify';
-import {Component} from '../../types/component.types';
-import {LoggerInterface} from '../logger/logger.interface';
+import {Component} from '../../types/component.types.js';
+import {LoggerInterface} from '../logger/logger.interface.js';
 import HttpError from './http-error.js';
 import {NextFunction, Request, Response} from 'express';
 import {createErrorObject} from '../../utils/common-functions.js';

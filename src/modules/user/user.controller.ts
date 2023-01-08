@@ -1,19 +1,20 @@
 import {Controller} from '../../common/controller/controller.js';
 import {inject} from 'inversify';
-import {Component} from '../../types/component.types';
-import {LoggerInterface} from '../../common/logger/logger.interface';
-import {UserServiceInterface} from './user-service.interface';
-import {ConfigInterface} from '../../common/config/config.interface';
+import {Component} from '../../types/component.types.js';
+import {LoggerInterface} from '../../common/logger/logger.interface.js';
+import {UserServiceInterface} from './user-service.interface.js';
+import {ConfigInterface} from '../../common/config/config.interface.js';
 import {Request, Response} from 'express';
-import CreateUserDto from './dto/create-user.dto';
+import CreateUserDto from './dto/create-user.dto.js';
 import {fillDTO} from '../../utils/common-functions.js';
-import UserResponse from './response/user.response';
+import UserResponse from './response/user.response.js';
 import {StatusCodes} from 'http-status-codes';
 import HttpError from '../../common/errors/http-error.js';
-import LoginUserDto from './dto/login-user.dto';
-import FilmResponse from '../film/response/film.response';
-import {UserRoute} from './user.models';
-import {HttpMethod} from '../../types/http-method.enum';
+import LoginUserDto from './dto/login-user.dto.js';
+import FilmResponse from '../film/response/film.response.js';
+import {UserRoute} from './user.models.js';
+import {HttpMethod} from '../../types/http-method.enum.js';
+import {ValidateDtoMiddleware} from '../../middlewares/validate-dto.middleware.js';
 
 export default class UserController extends Controller {
 
@@ -25,8 +26,18 @@ export default class UserController extends Controller {
     super(logger);
     this.logger.info('Register routes for UserController.');
 
-    this.addRoute<UserRoute>({path: UserRoute.REGISTER, method: HttpMethod.Post, handler: this.create});
-    this.addRoute<UserRoute>({path: UserRoute.LOGIN, method: HttpMethod.Post, handler: this.login});
+    this.addRoute<UserRoute>({
+      path: UserRoute.REGISTER,
+      method: HttpMethod.Post,
+      handler: this.create,
+      middlewares: [new ValidateDtoMiddleware(CreateUserDto)]
+    });
+    this.addRoute<UserRoute>({
+      path: UserRoute.LOGIN,
+      method: HttpMethod.Post,
+      handler: this.login,
+      middlewares: [new ValidateDtoMiddleware(LoginUserDto)]
+    });
     this.addRoute<UserRoute>({path: UserRoute.LOGIN, method: HttpMethod.Get, handler: this.get});
     this.addRoute<UserRoute>({path: UserRoute.LOGIN, method: HttpMethod.Delete, handler: this.logout});
     this.addRoute<UserRoute>({path: UserRoute.TO_WATCH, method: HttpMethod.Get, handler: this.getToWatch});
