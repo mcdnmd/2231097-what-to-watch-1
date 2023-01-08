@@ -4,8 +4,8 @@ import {Component} from '../../types/component.types.js';
 import {LoggerInterface} from '../../common/logger/logger.interface.js';
 import {FilmServiceInterface} from './film-service.interface.js';
 import {FilmEntity} from './film.entity.js';
-import CreateFilmDto from './dto/create-film.js';
-import UpdateMovieDto from './dto/update-film.dto';
+import CreateFilmDto from './dto/create-film.dto';
+import UpdateFilmDto from './dto/update-film.dto';
 
 @injectable()
 export default class FilmService implements FilmServiceInterface {
@@ -66,7 +66,7 @@ export default class FilmService implements FilmServiceInterface {
     return this.filmModel.findByIdAndUpdate(filmId, {$inc: {commentsCount: 1}});
   }
 
-  async updateById(filmId: string, dto: UpdateMovieDto): Promise<DocumentType<FilmEntity> | null> {
+  async updateById(filmId: string, dto: UpdateFilmDto): Promise<DocumentType<FilmEntity> | null> {
     return this.filmModel.findByIdAndUpdate(filmId, dto).populate('user');
   }
 
