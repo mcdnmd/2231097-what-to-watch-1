@@ -1,6 +1,6 @@
 import {GenreEnum} from '../../../types/genre.enum';
 
-export default class UpdateMovieDto {
+export default class UpdateFilmDto {
   name!: string;
   description!: string;
   pubDate!: Date;
