@@ -3,6 +3,7 @@ import {FilmPerson} from './filmPerson.type.js';
 import {GenreEnum} from './genre.enum.js';
 
 export type Film = {
+  isPromo?: boolean;
   name: string;
   description: string;
   pubDate: Date;

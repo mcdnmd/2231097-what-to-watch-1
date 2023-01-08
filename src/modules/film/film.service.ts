@@ -5,6 +5,7 @@ import {LoggerInterface} from '../../common/logger/logger.interface.js';
 import {FilmServiceInterface} from './film-service.interface.js';
 import {FilmEntity} from './film.entity.js';
 import CreateFilmDto from './dto/create-film.js';
+import UpdateMovieDto from './dto/update-film.dto';
 
 @injectable()
 export default class FilmService implements FilmServiceInterface {
@@ -14,13 +15,68 @@ export default class FilmService implements FilmServiceInterface {
   ) {}
 
   async create(dto: CreateFilmDto): Promise<DocumentType<FilmEntity>> {
-    const movie = await this.filmModel.create(dto);
-    this.logger.info(`New movie created: ${dto.name}`);
+    const film = await this.filmModel.create(dto);
+    this.logger.info(`New film created: ${dto.name}`);
 
-    return movie;
+    return film;
   }
 
-  async findById(movieId: string): Promise<DocumentType<FilmEntity> | null> {
-    return this.filmModel.findById(movieId).exec();
+  async findById(filmId: string): Promise<DocumentType<FilmEntity> | null> {
+    return this.filmModel.findById(filmId).exec();
   }
+
+  async deleteById(filmId: string): Promise<void | null> {
+    return this.filmModel.findByIdAndDelete(filmId);
+  }
+
+  async find(): Promise<DocumentType<FilmEntity>[]> {
+    return this.filmModel.aggregate([
+      {
+        $lookup: {
+          from: 'comments',
+          let: {filmId: '$_id'},
+          pipeline: [
+            {$match: {$expr: {$in: ['$$filmId', '$movies']}}},
+            {$project: {_id: 1}}
+          ],
+          as: 'comments'
+        },
+      },
+      {
+        $addFields: {
+          id: {$toString: '$_id'},
+          commentsCount: {$size: '$comments'},
+          rating: {$avg: '$comments.rating'}
+        }
+      },
+      {$unset: 'comments'},
+      {$limit:  60}
+    ]);
+  }
+
+  async findByGenre(genre: string, limit?: number): Promise<DocumentType<FilmEntity>[]> {
+    return this.filmModel.find({genre}, {}, {limit}).populate('user');
+  }
+
+  async findPromo(): Promise<DocumentType<FilmEntity> | null> {
+    return this.filmModel.findOne({isPromo: true}).populate('user');
+  }
+
+  async incCommentsCount(filmId: string): Promise<void | null> {
+    return this.filmModel.findByIdAndUpdate(filmId, {$inc: {commentsCount: 1}});
+  }
+
+  async updateById(filmId: string, dto: UpdateMovieDto): Promise<DocumentType<FilmEntity> | null> {
+    return this.filmModel.findByIdAndUpdate(filmId, dto).populate('user');
+  }
+
+  async updateFilmRating(filmId: string, newRating: number): Promise<void | null> {
+    const oldValues = await this.filmModel.findById(filmId).select('rating commentNumber');
+    const oldRating = oldValues?.['rating'] ?? 0;
+    const oldCommentsCount = oldValues?.['commentNumber'] ?? 0;
+    return this.filmModel.findByIdAndUpdate(filmId, {
+      rating: (oldRating * oldCommentsCount + newRating) / (oldCommentsCount + 1)
+    });
+  }
+
 }

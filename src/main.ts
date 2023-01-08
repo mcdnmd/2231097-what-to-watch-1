@@ -8,12 +8,28 @@ import {LoggerInterface} from './common/logger/logger.interface.js';
 import {ConfigInterface} from './common/config/config.interface.js';
 import {DatabaseInterface} from './common/database-client/database.interface.js';
 import DatabaseService from './common/database-client/database.service.js';
+import {CommentServiceInterface} from './modules/comment/comment-service.interface.js';
+import CommentService from './modules/comment/comment.service.js';
+import {UserEntity, UserModel} from './modules/user/user.entity.js';
+import {types} from '@typegoose/typegoose';
+import UserService from './modules/user/user.service.js';
+import {UserServiceInterface} from './modules/user/user-service.interface.js';
+import {FilmServiceInterface} from './modules/film/film-service.interface.js';
+import FilmService from './modules/film/film.service.js';
+import {FilmEntity, FilmModel} from './modules/film/film.entity.js';
+import {CommentEntity, CommentModel} from './modules/comment/comment.entity.js';
 
 const appContainer = new Container();
 appContainer.bind<Application>(Component.Application).to(Application).inSingletonScope();
 appContainer.bind<LoggerInterface>(Component.LoggerInterface).to(LoggerService).inSingletonScope();
 appContainer.bind<ConfigInterface>(Component.ConfigInterface).to(ConfigService).inSingletonScope();
 appContainer.bind<DatabaseInterface>(Component.DatabaseInterface).to(DatabaseService).inSingletonScope();
+appContainer.bind<UserServiceInterface>(Component.UserServiceInterface).to(UserService);
+appContainer.bind<types.ModelType<UserEntity>>(Component.UserModel).toConstantValue(UserModel);
+appContainer.bind<FilmServiceInterface>(Component.FilmServiceInterface).to(FilmService);
+appContainer.bind<types.ModelType<FilmEntity>>(Component.FilmModel).toConstantValue(FilmModel);
+appContainer.bind<CommentServiceInterface>(Component.CommentServiceInterface).to(CommentService);
+appContainer.bind<types.ModelType<CommentEntity>>(Component.CommentModel).toConstantValue(CommentModel);
 
 const app = appContainer.get<Application>(Component.Application);
 await app.init();
