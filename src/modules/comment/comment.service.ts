@@ -19,7 +19,7 @@ export default class CommentService implements CommentServiceInterface {
     return comment.populate('userId');
   }
 
-  public async findByFilmId(movieId: string): Promise<DocumentType<CommentEntity>[]> {
-    return this.commentModel.find({movieId}).populate('userId');
+  public async findByFilmId(filmId:string): Promise<DocumentType<CommentEntity>[]> {
+    return this.commentModel.find({filmId}).populate('userId');
   }
 }

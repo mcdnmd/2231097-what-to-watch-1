@@ -17,6 +17,7 @@ import {FilmServiceInterface} from './film-service.interface.js';
 import {ValidateDtoMiddleware} from '../../middlewares/validate-dto.middleware.js';
 import {ValidateObjectIdMiddleware} from '../../middlewares/validate-object-id.middleware.js';
 import CommentResponse from '../comment/response/comment.response.js';
+import {DocumentExistsMiddleware} from '../../middlewares/document-exists.middleware.js';
 
 type ParamsGetFilm = {
   filmId: string;
@@ -32,7 +33,8 @@ export default class FilmController extends Controller {
   ) {
     super(logger);
     this.logger.info('Register routes for FilmController.');
-    this.addRoute<FilmRoute>({path: FilmRoute.ROOT, method: HttpMethod.Get, handler: this.index});
+    console.log(filmService);
+    this.addRoute<FilmRoute>({path: FilmRoute.PROMO, method: HttpMethod.Get, handler: this.showPromo});
     this.addRoute<FilmRoute>({
       path: FilmRoute.CREATE,
       method: HttpMethod.Post,
@@ -40,42 +42,47 @@ export default class FilmController extends Controller {
       middlewares: [new ValidateDtoMiddleware(CreateFilmDto)]
     });
     this.addRoute<FilmRoute>({
-      path: FilmRoute.MOVIE,
+      path: FilmRoute.FILM,
       method: HttpMethod.Get,
       handler: this.show,
-      middlewares: [new ValidateObjectIdMiddleware('filmId'),]
+      middlewares: [
+        new ValidateObjectIdMiddleware('filmId'),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+      ]
     });
+    this.addRoute<FilmRoute>({path: FilmRoute.ROOT, method: HttpMethod.Get, handler: this.index});
     this.addRoute<FilmRoute>({
-      path: FilmRoute.MOVIE,
+      path: FilmRoute.FILM,
       method: HttpMethod.Patch,
       handler: this.update,
       middlewares: [
         new ValidateObjectIdMiddleware('filmId'),
         new ValidateDtoMiddleware(UpdateFilmDto),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
       ]
     });
     this.addRoute<FilmRoute>({
-      path: FilmRoute.MOVIE,
+      path: FilmRoute.FILM,
       method: HttpMethod.Delete,
       handler: this.delete,
-      middlewares: [new ValidateObjectIdMiddleware('filmId'),]
+      middlewares: [
+        new ValidateObjectIdMiddleware('filmId'),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+      ]
     });
-    this.addRoute<FilmRoute>({
-      path: FilmRoute.PROMO,
-      method: HttpMethod.Get,
-      handler: this.showPromo,
-      middlewares: [new ValidateObjectIdMiddleware('filmId'),]
-    });
-    this.addRoute<FilmRoute>({path: FilmRoute.PROMO, method: HttpMethod.Get, handler: this.showPromo});
     this.addRoute<FilmRoute>({
       path: FilmRoute.COMMENTS,
       method: HttpMethod.Get,
       handler: this.getComments,
-      middlewares: [new ValidateObjectIdMiddleware('filmId'),]
+      middlewares: [
+        new ValidateObjectIdMiddleware('filmId'),
+        new DocumentExistsMiddleware(this.filmService, 'Film', 'filmId'),
+      ]
     });
   }
 
   async index(_req: Request, res: Response): Promise<void> {
+    console.log(`/movies  this.filmService is ${typeof(this.filmService)}`);
     const films = await this.filmService.find();
     this.ok(res, fillDTO(FilmResponse, films));
   }
@@ -87,6 +94,7 @@ export default class FilmController extends Controller {
   }
 
   async show({params}: Request<core.ParamsDictionary | ParamsGetFilm>, res: Response): Promise<void> {
+    console.log(`/movies/${params.filmId}: this.filmService is ${typeof(this.filmService)}`);
     const result = await this.filmService.findById(params.filmId);
     if (!result) {
       throw new HttpError(StatusCodes.NOT_FOUND, `Movie with id '${params.filmId}' was not found`, 'MovieController');

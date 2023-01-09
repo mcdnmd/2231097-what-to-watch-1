@@ -144,7 +144,7 @@ paths:
         "400":
           description: Не удалось обработать запрос, так как он представлен в неправильном формате или является некорректным.
 
-  /movies/{movieId}:
+  /movies/{filmId}:
     get:
       tags:
         - movies
@@ -153,7 +153,7 @@ paths:
 
       parameters:
         - in: path
-          name: movieId
+          name: filmId
           schema:
             type: string
             format: uuid
@@ -179,7 +179,7 @@ paths:
 
       parameters:
         - in: path
-          name: movieId
+          name: filmId
           schema:
             type: string
             format: uuid
@@ -216,7 +216,7 @@ paths:
 
       parameters:
         - in: path
-          name: movieId
+          name: filmId
           schema:
             type: string
             format: uuid
@@ -349,14 +349,14 @@ paths:
                   format: uuid
                   example: 6329c3d6a04ab1061c6425ea
 
-                movieId:
+                filmId:
                   type: string
                   format: uuid
                   example: 6329c3d6a04ab1061c6425ease8u342
 
               required:
                 - userId
-                - movieId
+                - filmId
 
       responses:
         "201":
@@ -385,14 +385,14 @@ paths:
                   format: uuid
                   example: 6329c3d6a04ab1061c6425ea
 
-                movieId:
+                filmId:
                   type: string
                   format: uuid
                   example: 6329c3d6a04ab1061c6425ease8u342
 
               required:
                 - userId
-                - movieId
+                - filmId
 
       responses:
         "204":
@@ -402,7 +402,7 @@ paths:
           description: Пользователь не авторизован. Запрос отклонен.
 
 
-  /movies/{movieId}/comments:
+  /movies/{filmId}/comments:
     get:
       tags:
         - comments
@@ -411,7 +411,7 @@ paths:
 
       parameters:
         - in: path
-          name: movieId
+          name: filmId
           schema:
             type: string
             format: uuid
@@ -448,12 +448,12 @@ paths:
                 - $ref: '#/components/schemas/comment'
                 - type: object
                   properties:
-                    movieId:
+                    filmId:
                       type: string
                       format: uuid
                       example: 6329c3d6a04ab1061c6425ea
                   required:
-                    - movieId
+                    - filmId
 
       responses:
         "200":
@@ -715,12 +715,12 @@ components:
         - $ref: '#/components/schemas/createMovie'
         - type: object
           properties:
-            movieId:
+            filmId:
               type: string
               format: uuid
               example: 6329c3d6a04ab1061c6425ea
           required:
-            - movieId
+            - filmId
 
 
     movieListItem:

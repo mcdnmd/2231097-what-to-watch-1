@@ -23,7 +23,7 @@ export default class FilmService implements FilmServiceInterface {
 
   async findById(filmId: string): Promise<DocumentType<FilmEntity> | null> {
     this.logger.info(`findById film: ${filmId}`);
-    return this.filmModel.findById(filmId).exec();
+    return this.filmModel.findById(filmId).populate('userId');
   }
 
   async deleteById(filmId: string): Promise<void | null> {
@@ -37,7 +37,7 @@ export default class FilmService implements FilmServiceInterface {
           from: 'comments',
           let: {filmId: '$_id'},
           pipeline: [
-            {$match: {$expr: {$in: ['$$filmId', '$movies']}}},
+            {$match: {$expr: {$in: ['$$filmId', '$films']}}},
             {$project: {_id: 1}}
           ],
           as: 'comments'
@@ -56,11 +56,11 @@ export default class FilmService implements FilmServiceInterface {
   }
 
   async findByGenre(genre: string, limit?: number): Promise<DocumentType<FilmEntity>[]> {
-    return this.filmModel.find({genre}, {}, {limit}).populate('user');
+    return this.filmModel.find({genre}, {}, {limit}).populate('userId');
   }
 
   async findPromo(): Promise<DocumentType<FilmEntity> | null> {
-    return this.filmModel.findOne({isPromo: true}).populate('user');
+    return this.filmModel.findOne({isPromo: true}).populate('userId');
   }
 
   async incCommentsCount(filmId: string): Promise<void | null> {
@@ -68,11 +68,11 @@ export default class FilmService implements FilmServiceInterface {
   }
 
   async updateById(filmId: string, dto: UpdateFilmDto): Promise<DocumentType<FilmEntity> | null> {
-    return this.filmModel.findByIdAndUpdate(filmId, dto).populate('user');
+    return this.filmModel.findByIdAndUpdate(filmId, dto).populate('userId');
   }
 
   async updateFilmRating(filmId: string, newRating: number): Promise<void | null> {
-    const oldValues = await this.filmModel.findById(filmId).select('rating commentNumber');
+    const oldValues = await this.filmModel.findById(filmId).select('rating commentCount');
     const oldRating = oldValues?.['rating'] ?? 0;
     const oldCommentsCount = oldValues?.['commentsCount'] ?? 0;
     return this.filmModel.findByIdAndUpdate(filmId, {
