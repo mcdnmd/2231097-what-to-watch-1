@@ -1,7 +1,7 @@
 import {GenreEnum} from '../../../types/genre.enum.js';
 import {
   IsArray,
-  IsDateString,
+  IsDateString, IsEnum,
   IsInt,
   IsMongoId,
   IsOptional,
@@ -26,8 +26,9 @@ export default class UpdateFilmDto {
   public publicationDate!: Date;
 
   @IsOptional()
-  @IsArray({message: 'genre must be an array'})
-  public genre!: GenreEnum[];
+  @IsEnum(GenreEnum, {message: 'genre must be one of: \'comedy\',' +
+      ' \'crime\', \'documentary\', \'drama\', \'horror\', \'family\', \'romance\', \'scifi\', \'thriller\''})
+  public genre!: GenreEnum;
 
   @IsOptional()
   @IsInt({message: 'releaseYear must be an integer'})
