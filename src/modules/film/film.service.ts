@@ -22,7 +22,6 @@ export default class FilmService implements FilmServiceInterface {
   }
 
   async findById(filmId: string): Promise<DocumentType<FilmEntity> | null> {
-    this.logger.info(`findById film: ${filmId}`);
     return this.filmModel.findById(filmId).populate('userId');
   }
 
@@ -30,28 +29,14 @@ export default class FilmService implements FilmServiceInterface {
     return this.filmModel.findByIdAndDelete(filmId);
   }
 
-  async find(): Promise<DocumentType<FilmEntity>[]> {
+  async find(limit?: number): Promise<DocumentType<FilmEntity>[]> {
     return this.filmModel.aggregate([
-      {
-        $lookup: {
-          from: 'comments',
-          let: {filmId: '$_id'},
-          pipeline: [
-            {$match: {$expr: {$in: ['$$filmId', '$films']}}},
-            {$project: {_id: 1}}
-          ],
-          as: 'comments'
-        },
-      },
       {
         $addFields: {
           id: {$toString: '$_id'},
-          commentsCount: {$size: '$comments'},
-          rating: {$avg: '$comments.rating'}
         }
       },
-      {$unset: 'comments'},
-      {$limit:  60}
+      {$limit:  limit || 60}
     ]);
   }
 

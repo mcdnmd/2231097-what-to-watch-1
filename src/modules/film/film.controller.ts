@@ -18,10 +18,19 @@ import {ValidateDtoMiddleware} from '../../middlewares/validate-dto.middleware.j
 import {ValidateObjectIdMiddleware} from '../../middlewares/validate-object-id.middleware.js';
 import CommentResponse from '../comment/response/comment.response.js';
 import {DocumentExistsMiddleware} from '../../middlewares/document-exists.middleware.js';
+import {GenreEnum} from '../../types/genre.enum.js';
+import MovieListItemResponse from './response/film-items-list.response.js';
+import {DocumentType} from '@typegoose/typegoose';
+import {FilmEntity} from './film.entity.js';
 
 type ParamsGetFilm = {
   filmId: string;
 }
+
+type QueryParamsGetFilm = {
+  limit?: number;
+  genre?: GenreEnum;
+};
 
 
 @injectable()
@@ -80,9 +89,15 @@ export default class FilmController extends Controller {
     });
   }
 
-  async index(_req: Request, res: Response): Promise<void> {
-    const films = await this.filmService.find();
-    this.ok(res, fillDTO(FilmResponse, films));
+  async index(_req: Request<unknown, unknown, unknown, QueryParamsGetFilm>, res: Response): Promise<void> {
+    const {genre, limit} = _req.query;
+    let films: DocumentType<FilmEntity>[];
+    if (genre){
+      films = await this.filmService.findByGenre(genre, limit);
+    } else {
+      films = await this.filmService.find(limit);
+    }
+    this.ok(res, fillDTO(MovieListItemResponse, films));
   }
 
   async create({body}: Request<Record<string, unknown>,

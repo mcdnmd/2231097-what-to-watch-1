@@ -28,7 +28,9 @@ export default class CommentController extends Controller {
       path: CommentRoute.ROOT,
       method: HttpMethod.Post,
       handler: this.create,
-      middlewares: [new ValidateDtoMiddleware(CreateCommentDto)]
+      middlewares: [
+        new ValidateDtoMiddleware(CreateCommentDto)
+      ]
     });
   }
 

@@ -13,7 +13,7 @@ export default class CreateFilmDto {
 
   @IsEnum(GenreEnum, {message: 'genre must be one of: \'comedy\',' +
       ' \'crime\', \'documentary\', \'drama\', \'horror\', \'family\', \'romance\', \'scifi\', \'thriller\''})
-  public genre!: GenreEnum[];
+  public genre!: GenreEnum;
 
   @IsInt({message: 'releaseYear must be an integer'})
   @Min(1895, {message: 'Minimum releaseYear is 1895'})

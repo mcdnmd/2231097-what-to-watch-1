@@ -11,6 +11,7 @@ export type ConfigSchema = {
   DB_PASSWORD: string;
   DB_PORT: number;
   DB_NAME: string;
+  STATIC_DIRECTORY: string;
 }
 
 export const configSchema = convict<ConfigSchema>({
@@ -55,5 +56,11 @@ export const configSchema = convict<ConfigSchema>({
     format: String,
     env: 'DB_NAME',
     default: 'course-nodejs-restapi'
+  },
+  STATIC_DIRECTORY: {
+    doc: 'Directory for static files',
+    format: String,
+    env: 'STATIC_DIRECTORY',
+    default: null
   }
 });
