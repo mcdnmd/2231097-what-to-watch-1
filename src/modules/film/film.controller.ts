@@ -33,7 +33,6 @@ export default class FilmController extends Controller {
   ) {
     super(logger);
     this.logger.info('Register routes for FilmController.');
-    console.log(filmService);
     this.addRoute<FilmRoute>({path: FilmRoute.PROMO, method: HttpMethod.Get, handler: this.showPromo});
     this.addRoute<FilmRoute>({
       path: FilmRoute.CREATE,
@@ -82,7 +81,6 @@ export default class FilmController extends Controller {
   }
 
   async index(_req: Request, res: Response): Promise<void> {
-    console.log(`/movies  this.filmService is ${typeof(this.filmService)}`);
     const films = await this.filmService.find();
     this.ok(res, fillDTO(FilmResponse, films));
   }
@@ -94,7 +92,6 @@ export default class FilmController extends Controller {
   }
 
   async show({params}: Request<core.ParamsDictionary | ParamsGetFilm>, res: Response): Promise<void> {
-    console.log(`/movies/${params.filmId}: this.filmService is ${typeof(this.filmService)}`);
     const result = await this.filmService.findById(params.filmId);
     if (!result) {
       throw new HttpError(StatusCodes.NOT_FOUND, `Movie with id '${params.filmId}' was not found`, 'MovieController');

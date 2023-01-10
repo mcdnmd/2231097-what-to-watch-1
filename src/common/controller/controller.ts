@@ -21,7 +21,7 @@ export abstract class Controller implements ControllerInterface {
   addRoute<T extends string>(route: RouteInterface<T>) {
     const routerHandler = asyncHandler(route.handler.bind(this));
     const middlewares = route.middlewares?.map(
-      (middleware) => asyncHandler(route.handler.bind(middleware))
+      (middleware) => asyncHandler(middleware.execute.bind(middleware))
     );
     const allHandlers = middlewares ? [...middlewares, routerHandler] : routerHandler;
     this._router[route.method](route.path, allHandlers);
