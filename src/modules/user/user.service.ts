@@ -5,7 +5,7 @@ import CreateUserDto from './dto/create-user.dto.js';
 import {UserServiceInterface} from './user-service.interface.js';
 import {LoggerInterface} from '../../common/logger/logger.interface.js';
 import {Component} from '../../types/component.types.js';
-import {FilmEntity} from '../film/film.entity';
+import {FilmEntity} from '../film/film.entity.js';
 
 @injectable()
 export default class UserService implements UserServiceInterface {

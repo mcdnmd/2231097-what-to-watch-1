@@ -5,8 +5,8 @@ import {Component} from '../types/component.types.js';
 import {getURI} from '../utils/db.js';
 import {DatabaseInterface} from '../common/database-client/database.interface.js';
 import express, {Express} from 'express';
-import {ControllerInterface} from '../common/controller/controllet.interface';
-import {ExceptionFilterInterface} from '../common/errors/exception-filter.interface';
+import {ControllerInterface} from '../common/controller/controllet.interface.js';
+import {ExceptionFilterInterface} from '../common/errors/exception-filter.interface.js';
 
 @injectable()
 export default class Application {
@@ -19,6 +19,7 @@ export default class Application {
     @inject(Component.FilmController) private filmController: ControllerInterface,
     @inject(Component.UserController) private userController: ControllerInterface,
     @inject(Component.ExceptionFilterInterface) private exceptionFilter: ExceptionFilterInterface,
+    @inject(Component.CommentController) private commentController: ControllerInterface,
   ) {
     this.expressApp = express();
   }
@@ -26,6 +27,7 @@ export default class Application {
   private initRoutes() {
     this.expressApp.use('/movies', this.filmController.router);
     this.expressApp.use('/users', this.userController.router);
+    this.expressApp.use('/comments', this.commentController.router);
   }
 
   private initMiddleware() {

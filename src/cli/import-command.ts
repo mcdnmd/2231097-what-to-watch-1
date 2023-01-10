@@ -13,7 +13,7 @@ import DatabaseService from '../common/database-client/database.service.js';
 import {LoggerInterface} from '../common/logger/logger.interface.js';
 import UserService from '../modules/user/user.service.js';
 import {getURI} from '../utils/db.js';
-import {Film} from '../types/film.type';
+import {Film} from '../types/film.type.js';
 import {ConfigInterface} from '../common/config/config.interface.js';
 import ConfigService from '../common/config/config.service.js';
 
@@ -33,7 +33,7 @@ export default class ImportCommand implements CliCommandInterface {
 
     this.logger = new LoggerService();
     this.filmService = new FilmService(this.logger, FilmModel);
-    this.userService = new UserService(this.logger, UserModel);
+    this.userService = new UserService(this.logger, UserModel, FilmModel);
     this.databaseService = new DatabaseService(this.logger);
     this.config = new ConfigService(this.logger);
   }
@@ -64,21 +64,21 @@ export default class ImportCommand implements CliCommandInterface {
   private async saveFilm(film: Film) {
     const user = await this.userService.findOrCreate({...film.user, password: '1234567890'}, this.salt);
     const filmEntity = {
-      name: film.name,
+      title: film.title,
       description: film.description,
-      pubDate: film.pubDate,
+      publicationDate: film.publicationDate,
       genre: film.genre,
-      year: film.year,
+      releaseYear: film.releaseYear,
       rating: film.rating,
-      preview: film.preview,
-      video: film.video,
+      previewPath: film.previewPath,
+      moviePath: film.moviePath,
       actors: film.actors.map((actor) => `${actor.firstname} ${actor.lastname}`),
       producer: `${film.producer.firstname} ${film.producer.lastname}`,
-      duration: film.duration,
-      commentNumber: film.commentNumber,
-      user: user.id,
-      poster: film.poster,
-      backgroundImage: film.backgroundImage,
+      durationInMinutes: film.durationInMinutes,
+      commentsCount: film.commentsCount,
+      userId: user.id,
+      posterPath: film.posterPath,
+      backgroundImagePath: film.backgroundImagePath,
       backgroundColor: film.backgroundColor,
     };
     await this.filmService.create({...filmEntity});

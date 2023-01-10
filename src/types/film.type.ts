@@ -1,23 +1,23 @@
-import {User} from './user.type.js';
 import {FilmPerson} from './filmPerson.type.js';
 import {GenreEnum} from './genre.enum.js';
+import {User} from './user.type.js';
 
 export type Film = {
   isPromo?: boolean;
-  name: string;
+  title: string;
   description: string;
-  pubDate: Date;
+  publicationDate: Date;
   genre: GenreEnum[];
-  year: number;
+  releaseYear: number;
   rating: number;
-  preview: string;
-  video: string;
+  previewPath: string;
+  moviePath: string;
   actors: FilmPerson[];
   producer: FilmPerson;
-  duration: number;
-  commentNumber: number;
+  durationInMinutes: number;
+  commentsCount: number;
   user: User;
-  poster: string;
-  backgroundImage: string;
+  posterPath: string;
+  backgroundImagePath: string;
   backgroundColor: string;
 }
