@@ -13,6 +13,7 @@ import CommentResponse from './response/comment.response.js';
 import {CommentRoute} from './comment.models.js';
 import {HttpMethod} from '../../types/http-method.enum.js';
 import {ValidateDtoMiddleware} from '../../middlewares/validate-dto.middleware.js';
+import {PrivateRouteMiddleware} from '../../middlewares/private-route.middleware.js';
 
 @injectable()
 export default class CommentController extends Controller {
@@ -29,12 +30,14 @@ export default class CommentController extends Controller {
       method: HttpMethod.Post,
       handler: this.create,
       middlewares: [
-        new ValidateDtoMiddleware(CreateCommentDto)
+        new PrivateRouteMiddleware(),
+        new ValidateDtoMiddleware(CreateCommentDto),
       ]
     });
   }
 
-  async create({body}: Request<object, object, CreateCommentDto>, res: Response): Promise<void> {
+  async create(req: Request<object, object, CreateCommentDto>, res: Response): Promise<void> {
+    const {body, user} = req;
     if(!await this.filmService.exists(body.filmId)) {
       throw new HttpError(
         StatusCodes.NOT_FOUND,
@@ -42,7 +45,7 @@ export default class CommentController extends Controller {
         'CommentController'
       );
     }
-    const comment = await this.commentService.create(body);
+    const comment = await this.commentService.create({...body, userId: user.id});
     await this.filmService.incCommentsCount(body.filmId);
     this.created(res, fillDTO(CommentResponse,  comment));
   }

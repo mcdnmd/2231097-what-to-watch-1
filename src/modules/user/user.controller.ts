@@ -12,11 +12,14 @@ import {StatusCodes} from 'http-status-codes';
 import HttpError from '../../common/errors/http-error.js';
 import LoginUserDto from './dto/login-user.dto.js';
 import FilmResponse from '../film/response/film.response.js';
-import {UserRoute} from './user.models.js';
+import {JWT_TOKEN_ALGORITHM, UserRoute} from './user.models.js';
 import {HttpMethod} from '../../types/http-method.enum.js';
 import {ValidateDtoMiddleware} from '../../middlewares/validate-dto.middleware.js';
 import {UploadFileMiddleware} from '../../middlewares/upload-file.middleware.js';
 import {ValidateObjectIdMiddleware} from '../../middlewares/validate-object-id.middleware.js';
+import {PrivateRouteMiddleware} from '../../middlewares/private-route.middleware.js';
+import {createJwtToken} from '../../utils/hash-generator.js';
+import AuthUserDto from './dto/auth-user.dto.js';
 
 export default class UserController extends Controller {
 
@@ -42,14 +45,30 @@ export default class UserController extends Controller {
     });
     this.addRoute<UserRoute>({path: UserRoute.LOGIN, method: HttpMethod.Get, handler: this.get});
     this.addRoute<UserRoute>({path: UserRoute.LOGIN, method: HttpMethod.Delete, handler: this.logout});
-    this.addRoute<UserRoute>({path: UserRoute.TO_WATCH, method: HttpMethod.Get, handler: this.getToWatch});
-    this.addRoute<UserRoute>({path: UserRoute.TO_WATCH, method: HttpMethod.Post, handler: this.postToWatch});
-    this.addRoute<UserRoute>({path: UserRoute.TO_WATCH, method: HttpMethod.Delete, handler: this.deleteToWatch});
+    this.addRoute<UserRoute>({
+      path: UserRoute.TO_WATCH,
+      method: HttpMethod.Get,
+      handler: this.getToWatch,
+      middlewares: [new PrivateRouteMiddleware()]
+    });
+    this.addRoute<UserRoute>({
+      path: UserRoute.TO_WATCH,
+      method: HttpMethod.Post,
+      handler: this.postToWatch,
+      middlewares: [new PrivateRouteMiddleware()]
+    });
+    this.addRoute<UserRoute>({
+      path: UserRoute.TO_WATCH,
+      method: HttpMethod.Delete,
+      handler: this.deleteToWatch,
+      middlewares: [new PrivateRouteMiddleware()]
+    });
     this.addRoute<UserRoute>({
       path: UserRoute.AVATAR,
       method: HttpMethod.Post,
       handler: this.updateAvatar,
       middlewares: [
+        new PrivateRouteMiddleware(),
         new ValidateObjectIdMiddleware('userId'),
         new UploadFileMiddleware(this.configService.get('STATIC_DIRECTORY'), 'avatarPath'),
       ]
@@ -69,14 +88,18 @@ export default class UserController extends Controller {
   }
 
   async login({body}: Request<Record<string, unknown>,
-    Record<string, unknown>, LoginUserDto>, _res: Response): Promise<void> {
-    const existsUser = await this.userService.findByEmail(body.email);
-
-    if (!existsUser) {
+    Record<string, unknown>, LoginUserDto>, res: Response): Promise<void> {
+    const existedUser = await this.userService.findByEmail(body.email);
+    if (!existedUser) {
       throw new HttpError(StatusCodes.UNAUTHORIZED,
         `User with email "${body.email}" not found.`, 'UserController');
     }
-    throw new HttpError(StatusCodes.NOT_IMPLEMENTED, 'Not implemented', 'UserController');
+    const accessToken = await createJwtToken(
+      JWT_TOKEN_ALGORITHM,
+      this.configService.get('TOKEN_SECRET'),
+      { email: existedUser.email, id: existedUser.id}
+    );
+    this.ok(res, fillDTO(AuthUserDto, {email: existedUser.email, token: accessToken}));
   }
 
   async get(_: Request<Record<string, unknown>,
