@@ -36,7 +36,7 @@ export class UserEntity extends defaultClasses.TimeStamps implements User {
   @prop({required: true, default: []})
   public filmsToWatch!: string[];
 
-  @prop({required: true, default: ''})
+  @prop({required: true})
   private password!: string;
 
   public setPassword(password: string, salt: string) {

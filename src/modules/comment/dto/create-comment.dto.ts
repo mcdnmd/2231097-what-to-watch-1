@@ -10,9 +10,9 @@ export default class CreateCommentDto {
   @Max(10, {message: 'Maximum rating is 10'})
   public rating!: number;
 
-  @IsMongoId({message: 'movieId field must be valid an id'})
+  @IsMongoId({message: 'filmId field must be valid an id'})
   public filmId!: string;
 
-  @IsMongoId({message: 'movieId field must be valid an id'})
+  @IsMongoId({message: 'userId field must be valid an id'})
   public userId!: string;
 }
