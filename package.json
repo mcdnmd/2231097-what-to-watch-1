@@ -16,7 +16,8 @@
     "compile": "tsc -p tsconfig.json",
     "clean": "rimraf dist",
     "ts": "ts-node",
-    "mock:server": "json-server ./mocks/mock-server-data.json --port 3123"
+    "mock:server": "json-server ./mocks/mock-server-data.json --port 3123",
+    "redoc": "redoc-cli serve  specification/specification.yml  --options.nativeScrollbars"
   },
   "devDependencies": {
     "@types/convict": "6.1.1",
@@ -36,6 +37,7 @@
     "json-server": "^0.8.23",
     "nodemon": "2.0.20",
     "pino-pretty": "9.1.1",
+    "redoc-cli": "0.13.20",
     "rimraf": "3.0.2",
     "ts-node": "10.7.0",
     "typescript": "4.6.3"
