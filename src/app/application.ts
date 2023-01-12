@@ -8,6 +8,7 @@ import express, {Express} from 'express';
 import {ControllerInterface} from '../common/controller/controllet.interface.js';
 import {ExceptionFilterInterface} from '../common/errors/exception-filter.interface.js';
 import {AuthenticateMiddleware} from '../middlewares/authenticate.middleware.js';
+import cors from 'cors';
 
 @injectable()
 export default class Application {
@@ -33,6 +34,7 @@ export default class Application {
 
   private initMiddleware() {
     this.expressApp.use(express.json());
+    this.expressApp.use(cors());
     this.expressApp.use('/upload', express.static(this.config.get('STATIC_DIRECTORY')));
     const authMiddleware = new AuthenticateMiddleware(this.config.get('TOKEN_SECRET'));
     this.expressApp.use(authMiddleware.execute.bind(authMiddleware));

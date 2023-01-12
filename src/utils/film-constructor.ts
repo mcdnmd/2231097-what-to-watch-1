@@ -21,8 +21,8 @@ function getFilmPerson(filmPerson: string): FilmPerson {
   return {firstname, lastname};
 }
 
-function getGenres(genre: string): GenreEnum[] {
-  return  genre.split(';').map((item): GenreEnum => item as GenreEnum);
+function getGenre(genre: string): GenreEnum {
+  return  genre as GenreEnum;
 }
 
 export const createFilm = (line: string): Film => {
@@ -46,7 +46,7 @@ export const createFilm = (line: string): Film => {
     title: name,
     description: description,
     publicationDate: new Date(Date.parse(pubDate)),
-    genre: getGenres(genre),
+    genre: getGenre(genre),
     releaseYear: Number(year),
     rating: Number(rating),
     previewPath: preview,

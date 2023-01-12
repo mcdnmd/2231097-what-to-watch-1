@@ -62,7 +62,7 @@ export default class ImportCommand implements CliCommandInterface {
   }
 
   private async saveFilm(film: Film) {
-    const user = await this.userService.findOrCreate({...film.user, password: '1234567890'}, this.salt);
+    const user = await this.userService.findOrCreate({...film.user, password: '1234567890', filmsToWatch: []}, this.salt);
     const filmEntity = {
       title: film.title,
       description: film.description,

@@ -294,7 +294,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/movie'
 
-  /movies/to_watch:
+  /users/to_watch:
     get:
       tags:
         - movies

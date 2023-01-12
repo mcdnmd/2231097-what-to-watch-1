@@ -1,6 +1,6 @@
 {
   "api": {
-    "names": [
+    "titles": [
       "Золото",
       "Сделано в Америке",
       "Форс-мажоры",
@@ -15,13 +15,13 @@
       "16-летний Ходака Морисима убегает из дома в Токио, где у него сразу кончаются деньги. Мало того, что без документов он не может найти работу, так ещё на улице идёт бесконечный дождь, и небо постоянно затянуто тучами. В отчаянии парень обращается к бывшему попутчику, а тот не только берёт его в свой журнал, пишущий о сверхъестественном, но и предоставляет жильё. Однажды Ходака знакомится с девушкой по имени Хина Амано, которая обладает удивительной способностью разгонять тучи и останавливать дождь."
     ],
     "genres": [
-      "Drama",
-      "Crime",
-      "Documentary",
-      "Drama",
-      "Horror"
+      "drama",
+      "crime",
+      "documentary",
+      "drama",
+      "horror"
     ],
-    "years": [
+    "releaseYears": [
       2000,
       2001,
       2002,
@@ -35,14 +35,14 @@
       2,
       1
     ],
-    "previews": [
+    "previewPaths": [
       "gold_movie.png",
       "american_made_movie.svg",
       "suits_movie.jpg",
       "lion_king_movie.jpeg",
       "weathering_with_you_movie.png"
     ],
-    "videos": [
+    "moviePaths": [
       "https://t.com/gold_movie",
       "https://t.com/american_made_movie",
       "https://t.com/suits_movie",
@@ -73,7 +73,7 @@
       "Роджер Алерс",
       "Макото Синкай"
     ],
-    "movieDurations":[
+    "movieDurationsInMinutes":[
       123,
       135,
       110,
@@ -122,7 +122,7 @@
       "lion_king_poster.jpg",
       "weathering_with_you_poster.jpg"
     ],
-    "backgroundImages": [
+    "backgroundImagePaths": [
       "gold_bg.jpg",
       "american_made_bg.jpg",
       "suits_bg.jpg",

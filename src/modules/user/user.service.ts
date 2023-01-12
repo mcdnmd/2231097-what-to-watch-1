@@ -8,6 +8,7 @@ import {Component} from '../../types/component.types.js';
 import {FilmEntity} from '../film/film.entity.js';
 import LoginUserDto from './dto/login-user.dto';
 
+
 @injectable()
 export default class UserService implements UserServiceInterface {
   constructor(
@@ -19,7 +20,6 @@ export default class UserService implements UserServiceInterface {
   public async create(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
     const user = new UserEntity(dto);
     user.setPassword(dto.password, salt);
-
     const result = await this.userModel.create(user);
     this.logger.info(`New user created: ${user.email}`);
 
@@ -27,17 +27,16 @@ export default class UserService implements UserServiceInterface {
   }
 
   public async findByEmail(email: string): Promise<DocumentType<UserEntity> | null> {
-    return this.userModel.findOne({email});
+    return await this.userModel.findOne({email});
   }
 
   public async findOrCreate(dto: CreateUserDto, salt: string): Promise<DocumentType<UserEntity>> {
     const existedUser = await this.findByEmail(dto.email);
-    this.logger.info(`existedUser: ${existedUser}`);
     if (existedUser) {
       return existedUser;
     }
 
-    return this.create(dto, salt);
+    return await this.create(dto, salt);
   }
 
   async addToWatch(filmId: string, userId: string): Promise<void | null> {
@@ -47,14 +46,14 @@ export default class UserService implements UserServiceInterface {
   }
 
   async deleteToWatch(filmId: string, userId: string): Promise<void | null> {
-    return this.userModel.findByIdAndUpdate(userId, {
+    return await this.userModel.findByIdAndUpdate(userId, {
       $pull: {filmsToWatch: filmId}
     });
   }
 
   async findToWatch(userId: string): Promise<DocumentType<FilmEntity>[]> {
-    const filmsToWatch = await this.userModel.findById(userId).select('filmsToWatch');
-    return this.filmModel.find({_id: {$in: filmsToWatch?.filmsToWatch}});
+    const result = await this.userModel.findById(userId).select('filmsToWatch');
+    return await this.filmModel.find({_id: {$in: result?.filmsToWatch}});
   }
 
   async verifyUser(dto: LoginUserDto, salt: string): Promise<DocumentType<UserEntity> | null> {

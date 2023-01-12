@@ -89,10 +89,11 @@ export default class UserController extends Controller {
 
   async login({body}: Request<Record<string, unknown>,
     Record<string, unknown>, LoginUserDto>, res: Response): Promise<void> {
-    const existedUser = await this.userService.findByEmail(body.email);
+    // const existedUser = await this.userService.findByEmail(body.email);
+    const existedUser = await this.userService.verifyUser(body, this.configService.get('SALT'));
     if (!existedUser) {
       throw new HttpError(StatusCodes.UNAUTHORIZED,
-        `User with email "${body.email}" not found.`, 'UserController');
+        'email or password wrong', 'UserController');
     }
     const accessToken = await createJwtToken(
       JWT_TOKEN_ALGORITHM,
@@ -112,21 +113,21 @@ export default class UserController extends Controller {
     throw new HttpError(StatusCodes.NOT_IMPLEMENTED, 'Not implemented', 'UserController');
   }
 
-  async getToWatch({body}: Request<Record<string, unknown>,
+  async getToWatch({user}: Request<Record<string, unknown>,
     Record<string, unknown>, {userId: string}>, _res: Response): Promise<void> {
-    const result = await this.userService.findToWatch(body.userId);
+    const result = await this.userService.findToWatch(user.id);
     this.ok(_res, fillDTO(FilmResponse, result));
   }
 
   async postToWatch({body}: Request<Record<string, unknown>,
-    Record<string, unknown>, {userId: string, movieId: string}>, _res: Response): Promise<void> {
-    await this.userService.addToWatch(body.movieId, body.userId);
+    Record<string, unknown>, {userId: string, filmId: string}>, _res: Response): Promise<void> {
+    await this.userService.addToWatch(body.filmId, body.userId);
     this.noContent(_res, {message: 'Successful. Film was added in playlist "To watch".'});
   }
 
   async deleteToWatch({body}: Request<Record<string, unknown>,
-    Record<string, unknown>, {userId: string, movieId: string}>, _res: Response): Promise<void> {
-    await this.userService.deleteToWatch(body.movieId, body.userId);
+    Record<string, unknown>, {userId: string, filmId: string}>, _res: Response): Promise<void> {
+    await this.userService.deleteToWatch(body.filmId, body.userId);
     this.noContent(_res, {message: 'Successful. Film was deleted from playlist "To watch".'});
   }
 

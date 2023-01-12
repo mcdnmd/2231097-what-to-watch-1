@@ -8,7 +8,7 @@ export type MockedFilms = {
   moviePaths : string[],
   actors: string[],
   producers: string[],
-  movieDurationSInMinutes: number[],
+  movieDurationsInMinutes: number[],
   userNames: string[],
   userLastNames: string[],
   userEmails: string[],
